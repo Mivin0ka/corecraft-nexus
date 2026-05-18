@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoreCraft Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Onest:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Onest', sans-serif; transition: background 0.3s, color 0.3s; }
+
+/* ── THEMES ── */
+body.dark {
+  --bg: #0a0a0b;
+  --surface: #111114;
+  --surface2: #0d0d10;
+  --border: #1e1e24;
+  --muted: #2a2a32;
+  --subtle: #3a3a45;
+  --text: #e8e8f0;
+  --dim: #888899;
+  --accent: #6c8bff;
+  --accent-bg: rgba(108,139,255,0.12);
+  --accent-border: rgba(108,139,255,0.28);
+  --ok: #4dffaa;
+  --ok-bg: rgba(77,255,170,0.12);
+  --warn: #ffaa4d;
+  --warn-bg: rgba(255,170,77,0.12);
+  --danger: #ff6b6b;
+  --danger-bg: rgba(255,107,107,0.1);
+  --danger-border: rgba(255,107,107,0.22);
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --tag-bg: rgba(255,255,255,0.05);
+}
+body.light {
+  --bg: #C9E4DE;
+  --surface: #dff0eb;
+  --surface2: #cde8e2;
+  --border: #b5d5ce;
+  --muted: #a5c8c1;
+  --subtle: #8bbab2;
+  --text: #1a2e2b;
+  --dim: #4a706a;
+  --accent: #5b6fcf;
+  --accent-bg: rgba(91,111,207,0.12);
+  --accent-border: rgba(91,111,207,0.3);
+  --ok: #2a9b6f;
+  --ok-bg: rgba(42,155,111,0.12);
+  --warn: #b07a20;
+  --warn-bg: rgba(176,122,32,0.12);
+  --danger: #cc4444;
+  --danger-bg: rgba(204,68,68,0.1);
+  --danger-border: rgba(204,68,68,0.25);
+  --shadow: 0 4px 24px rgba(0,0,0,0.1);
+  --tag-bg: rgba(0,0,0,0.06);
+}
+body.purple {
+  --bg: #1a1428;
+  --surface: #221b35;
+  --surface2: #1d1730;
+  --border: #2e2448;
+  --muted: #3d3060;
+  --subtle: #4e3d78;
+  --text: #ede8f8;
+  --dim: #9d8fc0;
+  --accent: #DBCDF0;
+  --accent-bg: rgba(219,205,240,0.12);
+  --accent-border: rgba(219,205,240,0.25);
+  --ok: #7de8b8;
+  --ok-bg: rgba(125,232,184,0.12);
+  --warn: #f0c87a;
+  --warn-bg: rgba(240,200,122,0.12);
+  --danger: #f07070;
+  --danger-bg: rgba(240,112,112,0.1);
+  --danger-border: rgba(240,112,112,0.25);
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --tag-bg: rgba(219,205,240,0.08);
+}
+
+body { background: var(--bg); color: var(--text); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
+
+/* ── LAYOUT ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.sidebar { width: 224px; min-width: 224px; background: var(--surface2); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.main { flex: 1; overflow: auto; display: flex; flex-direction: column; }
+.page { display: none; flex: 1; padding: 28px; }
+.page.active { display: block; }
+
+/* ── SIDEBAR ── */
+.logo-area { padding: 18px 16px 14px; border-bottom: 1px solid var(--border); }
+.logo-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.02em; display: flex; align-items: center; gap: 8px; }
+.logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.logo-sub { font-size: 10px; color: var(--subtle); font-family: 'JetBrains Mono', monospace; margin-top: 3px; padding-left: 15px; }
+.nav { flex: 1; padding: 10px 8px; display: flex; flex-direction: column; gap: 1px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--dim); border: none; background: none; width: 100%; text-align: left; font-family: 'Onest', sans-serif; transition: all 0.15s; border-left: 2px solid transparent; }
+.nav-item:hover { background: var(--accent-bg); color: var(--text); }
+.nav-item.active { background: var(--accent-bg); color: var(--text); border-left-color: var(--accent); font-weight: 500; }
+.nav-icon { font-size: 15px; flex-shrink: 0; }
+.nav-section { font-size: 10px; color: var(--subtle); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 10px 4px; }
+.sidebar-bottom { padding: 10px 8px; border-top: 1px solid var(--border); }
+.theme-switcher { display: flex; gap: 4px; margin-bottom: 8px; }
+.theme-btn { flex: 1; padding: 5px 4px; border-radius: 5px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--dim); transition: all 0.15s; }
+.theme-btn:hover, .theme-btn.active { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent); }
+.footer-credits { font-size: 10px; color: var(--subtle); font-family: 'JetBrains Mono', monospace; line-height: 1.7; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; font-family: 'Onest', sans-serif; }
+.btn-primary { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+.btn-primary:hover { background: rgba(108,139,255,0.22); }
+.btn-ghost { background: transparent; color: var(--dim); border-color: var(--border); }
+.btn-ghost:hover { background: var(--tag-bg); color: var(--text); }
+.btn-danger { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+.btn-danger:hover { background: rgba(255,107,107,0.2); }
+.btn-ok { background: var(--ok-bg); color: var(--ok); border-color: rgba(77,255,170,0.2); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-xs { padding: 2px 8px; font-size: 11px; }
+.icon-btn { padding: 5px; border-radius: 5px; width: 28px; height: 28px; justify-content: center; }
+
+/* ── INPUTS ── */
+.input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 12px; font-size: 13px; font-family: 'Onest', sans-serif; outline: none; transition: border-color 0.15s; width: 100%; }
+.input:focus { border-color: var(--accent-border); }
+.input::placeholder { color: var(--subtle); }
+textarea.input { resize: vertical; min-height: 80px; }
+select.input { cursor: pointer; }
+.label { font-size: 12px; color: var(--dim); display: block; margin-bottom: 5px; }
+.form-row { display: flex; flex-direction: column; gap: 4px; }
+.form-grid { display: grid; gap: 12px; }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; transition: border-color 0.15s; }
+.card:hover { border-color: var(--muted); }
+.card-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-body { padding: 14px 16px; }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+.badge-active { background: var(--ok-bg); color: var(--ok); }
+.badge-testing { background: var(--warn-bg); color: var(--warn); }
+.badge-deprecated { background: var(--danger-bg); color: var(--danger); }
+.badge-server { background: var(--accent-bg); color: var(--accent); }
+.badge-plugin { background: var(--warn-bg); color: var(--warn); }
+
+.tag { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--dim); background: var(--tag-bg); padding: 2px 7px; border-radius: 3px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(5px); z-index: 200; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.15s; }
+.modal { background: var(--surface); border: 1px solid var(--muted); border-radius: 10px; width: 100%; max-width: 500px; padding: 24px; animation: slideUp 0.2s; max-height: 90vh; overflow-y: auto; }
+.modal-lg { max-width: 680px; }
+.modal-title { font-size: 15px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }
+
+/* ── KANBAN ── */
+.kanban { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.kanban-col { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; min-height: 160px; }
+.kanban-col-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 11px 12px; cursor: grab; transition: all 0.15s; user-select: none; }
+.task-card:hover { border-color: var(--muted); box-shadow: var(--shadow); }
+.task-card.dragging { opacity: 0.4; }
+.task-card.drag-over { border-color: var(--accent); }
+.priority-bar { width: 3px; border-radius: 2px; flex-shrink: 0; align-self: stretch; }
+.p-high { background: var(--danger); }
+.p-med { background: var(--warn); }
+.p-low { background: var(--subtle); }
+
+/* ── PROGRESS BAR ── */
+.prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
+
+/* ── POMODORO ── */
+.pomodoro { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); display: flex; align-items: center; gap: 5px; }
+.pomodoro.running { color: var(--ok); }
+
+/* ── DEADLINE ── */
+.deadline-ok { color: var(--dim); }
+.deadline-soon { color: var(--warn); }
+.deadline-overdue { color: var(--danger); }
+
+/* ── SEARCH ── */
+.search-bar { position: relative; }
+.search-bar input { padding-left: 34px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--subtle); }
+
+/* ── CHECKLIST ── */
+.check-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 8px; border-radius: 6px; transition: background 0.1s; }
+.check-item:hover { background: var(--tag-bg); }
+.checkbox { width: 16px; height: 16px; border: 1px solid var(--subtle); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; margin-top: 1px; }
+.checkbox.checked { background: var(--ok-bg); border-color: var(--ok); }
+
+/* ── MARKDOWN PREVIEW ── */
+.md-preview { font-size: 13px; line-height: 1.7; color: var(--text); }
+.md-preview h1 { font-size: 18px; font-weight: 700; margin: 16px 0 8px; }
+.md-preview h2 { font-size: 15px; font-weight: 600; margin: 14px 0 6px; color: var(--dim); }
+.md-preview h3 { font-size: 13px; font-weight: 600; margin: 10px 0 4px; }
+.md-preview p { margin-bottom: 8px; }
+.md-preview code { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--tag-bg); padding: 1px 5px; border-radius: 3px; }
+.md-preview pre { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow-x: auto; margin: 8px 0; }
+.md-preview pre code { background: none; padding: 0; }
+.md-preview ul, .md-preview ol { padding-left: 20px; margin-bottom: 8px; }
+.md-preview li { margin-bottom: 3px; }
+.md-preview strong { font-weight: 600; }
+.md-preview em { font-style: italic; color: var(--dim); }
+.md-preview blockquote { border-left: 3px solid var(--accent); padding-left: 12px; color: var(--dim); margin: 8px 0; }
+.md-preview hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+/* ── STAT CARDS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.stat-num { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; line-height: 1; }
+.stat-label { font-size: 11px; color: var(--dim); margin-top: 6px; }
+
+/* ── MISC ── */
+.empty { text-align: center; padding: 40px 20px; color: var(--subtle); font-size: 13px; }
+.ph { font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 4px 0; }
+.section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.page-title { font-size: 20px; font-weight: 700; }
+.page-sub { font-size: 13px; color: var(--dim); margin-top: 3px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+.flex { display: flex; } .items-center { align-items: center; } .gap-2 { gap: 8px; } .gap-1 { gap: 4px; } .flex-1 { flex: 1; } .fw { flex-wrap: wrap; }
+.notif { position: fixed; bottom: 22px; right: 22px; background: var(--surface); border: 1px solid var(--muted); border-radius: 8px; padding: 11px 16px; font-size: 13px; z-index: 300; animation: slideInR 0.2s; box-shadow: var(--shadow); }
+@keyframes slideInR { from { opacity:0; transform: translateX(10px) } to { opacity:1; transform: translateX(0) } }
+.changelog-entry { border-left: 2px solid var(--accent-border); padding: 8px 12px; margin-bottom: 8px; border-radius: 0 6px 6px 0; background: var(--surface2); }
+.dep-tag { font-size: 11px; font-family: 'JetBrains Mono', monospace; background: var(--muted); color: var(--dim); padding: 2px 8px; border-radius: 12px; display: inline-block; }
+.history-item { font-size: 11px; color: var(--dim); font-family: 'JetBrains Mono', monospace; padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.history-item:last-child { border-bottom: none; }
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 8px 16px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--dim); transition: all 0.15s; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Onest', sans-serif; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.wiki-list { display: flex; flex-direction: column; gap: 8px; }
+.wiki-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: border-color 0.15s; }
+.wiki-item:hover { border-color: var(--muted); }
+.bug-severity { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sev-critical { background: var(--danger); }
+.sev-medium { background: var(--warn); }
+.sev-minor { background: var(--subtle); }
+.archive-section { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 20px; }
+</style>
+</head>
+<body class="dark">
+<div class="app">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="logo-area">
+    <div class="logo-name"><span class="logo-dot"></span>CoreCraft Nexus</div>
+    <div class="logo-sub">v2.0 · local panel</div>
+  </div>
+
+  <div class="search-bar" style="padding:10px 8px;">
+    <span class="search-icon">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </span>
+    <input class="input" id="global-search" placeholder="Поиск..." oninput="doSearch(this.value)" style="padding-left:32px;font-size:12px;">
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">Обзор</div>
+    <button class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard"><span class="nav-icon">📊</span>Статистика</button>
+
+    <div class="nav-section">Разработка</div>
+    <button class="nav-item" onclick="navigate('tasks')" data-page="tasks"><span class="nav-icon">📋</span>Таск-борд</button>
+    <button class="nav-item" onclick="navigate('bugs')" data-page="bugs"><span class="nav-icon">🐛</span>Баг-трекер</button>
+    <button class="nav-item" onclick="navigate('notes')" data-page="notes"><span class="nav-icon">📝</span>Заметки</button>
+
+    <div class="nav-section">Инфраструктура</div>
+    <button class="nav-item" onclick="navigate('servers')" data-page="servers"><span class="nav-icon">🎛️</span>Серверы</button>
+    <button class="nav-item" onclick="navigate('plugins')" data-page="plugins"><span class="nav-icon">📦</span>Глобальные плагины</button>
+    <button class="nav-item" onclick="navigate('testing')" data-page="testing"><span class="nav-icon">🔄</span>Тестируется</button>
+    <button class="nav-item" onclick="navigate('wiki')" data-page="wiki"><span class="nav-icon">📖</span>Wiki</button>
+    <button class="nav-item" onclick="navigate('archive')" data-page="archive"><span class="nav-icon">🗄️</span>Архив</button>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="theme-switcher">
+      <button class="theme-btn active" onclick="setTheme('dark')" id="th-dark">● Тёмная</button>
+      <button class="theme-btn" onclick="setTheme('light')" id="th-light">○ Светлая</button>
+      <button class="theme-btn" onclick="setTheme('purple')" id="th-purple">◈ Purple</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;">
+      <button class="btn btn-ghost btn-sm" style="flex:1;font-size:11px;" onclick="exportData()">↑ Export</button>
+      <label class="btn btn-ghost btn-sm" style="flex:1;font-size:11px;cursor:pointer;">↓ Import<input type="file" accept=".json" style="display:none;" onchange="importData(event)"></label>
+    </div>
+    <div class="footer-credits">
+      <div>DEV astridhanson</div>
+      <div>TG @ahilesgroup</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+<!-- SEARCH RESULTS -->
+<div id="search-results" style="display:none;padding:20px;flex:1;">
+  <div class="section-hd"><span class="page-title" style="font-size:16px;">🔍 Результаты поиска</span><button class="btn btn-ghost btn-sm" onclick="clearSearch()">✕ Закрыть</button></div>
+  <div id="search-output"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="section-hd">
+    <div><div class="page-title">Статистика</div><div class="page-sub">Обзор проекта</div></div>
+  </div>
+  <div class="stats-grid" id="stats-grid"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card"><div class="card-header"><span style="font-size:13px;font-weight:600;">Задачи по приоритету</span></div><div class="card-body" id="dash-priority"></div></div>
+    <div class="card"><div class="card-header"><span style="font-size:13px;font-weight:600;">Последние изменения</span></div><div class="card-body" id="dash-recent"></div></div>
+  </div>
+</div>
+
+<!-- TASKS -->
+<div id="page-tasks" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Таск-борд</div><div class="page-sub">Канбан-доска задач</div></div>
+    <button class="btn btn-primary" onclick="openModal('addTask')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Новая задача
+    </button>
+  </div>
+  <div class="kanban" id="kanban"></div>
+  <div class="archive-section" id="tasks-archive-section">
+    <div class="flex items-center gap-2" style="margin-bottom:10px;cursor:pointer;" onclick="toggleArchive()">
+      <span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--dim);">🗄️ АРХИВ ВЫПОЛНЕННЫХ</span>
+      <span class="tag" id="archive-count">0</span>
+      <span style="color:var(--dim);font-size:11px;" id="archive-toggle-icon">▶</span>
+    </div>
+    <div id="tasks-archive" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- BUGS -->
+<div id="page-bugs" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Баг-трекер</div><div class="page-sub">Отслеживание проблем</div></div>
+    <button class="btn btn-primary" onclick="openModal('addBug')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Новый баг
+    </button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="filterBugs('open',this)">Открытые</button>
+    <button class="tab" onclick="filterBugs('progress',this)">В работе</button>
+    <button class="tab" onclick="filterBugs('fixed',this)">Исправлены</button>
+    <button class="tab" onclick="filterBugs('all',this)">Все</button>
+  </div>
+  <div id="bugs-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+</div>
+
+<!-- NOTES -->
+<div id="page-notes" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Заметки</div><div class="page-sub">Markdown-редактор</div></div>
+    <button class="btn btn-primary" onclick="openModal('addNote')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Новая заметка
+    </button>
+  </div>
+  <div style="display:grid;grid-template-columns:220px 1fr;gap:16px;">
+    <div id="notes-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+    <div id="note-editor-area">
+      <div class="empty" style="padding:60px 20px;">
+        <div style="font-size:32px;margin-bottom:10px;">📝</div>
+        Выберите заметку или создайте новую
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVERS -->
+<div id="page-servers" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Группы серверов</div><div class="page-sub">Управление серверами и плагинами</div></div>
+    <button class="btn btn-primary" onclick="openModal('addServerGroup')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Новая группа
+    </button>
+  </div>
+  <div id="server-groups-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+</div>
+
+<!-- GLOBAL PLUGINS -->
+<div id="page-plugins" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Глобальные плагины</div><div class="page-sub">Независимые плагины</div></div>
+    <button class="btn btn-primary" onclick="openModal('addGlobalPlugin')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Новый плагин
+    </button>
+  </div>
+  <div id="global-plugins-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+</div>
+
+<!-- TESTING -->
+<div id="page-testing" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Тестируется</div><div class="page-sub">Что не успел — что доделать</div></div>
+    <button class="btn btn-primary" onclick="openModal('addTesting')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Добавить
+    </button>
+  </div>
+  <div id="testing-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+</div>
+
+<!-- WIKI -->
+<div id="page-wiki" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Wiki</div><div class="page-sub">Документация по серверам</div></div>
+    <button class="btn btn-primary" onclick="openModal('addWiki')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Новая страница
+    </button>
+  </div>
+  <div style="display:grid;grid-template-columns:240px 1fr;gap:16px;">
+    <div class="wiki-list" id="wiki-list"></div>
+    <div id="wiki-viewer"><div class="empty" style="padding:60px 20px;"><div style="font-size:32px;margin-bottom:10px;">📖</div>Выберите страницу</div></div>
+  </div>
+</div>
+
+<!-- ARCHIVE -->
+<div id="page-archive" class="page">
+  <div class="section-hd">
+    <div><div class="page-title">Архив</div><div class="page-sub">Выполненные задачи</div></div>
+    <button class="btn btn-danger btn-sm" onclick="clearArchive()">Очистить архив</button>
+  </div>
+  <div id="archive-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+</div>
+
+<!-- FOOTER -->
+<footer style="padding:10px 28px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+  <span style="font-size:10px;color:var(--subtle);font-family:'JetBrains Mono',monospace;" id="autosave-status">Автосохранение активно</span>
+  <span style="font-size:10px;color:var(--subtle);font-family:'JetBrains Mono',monospace;">Разработано: astridhanson &nbsp;|&nbsp; TG: @ahilesgroup</span>
+</footer>
+</main>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" style="display:none;" onclick="closeModalOutside(event)">
+  <div class="modal-overlay">
+    <div class="modal" id="modal-box"></div>
+  </div>
+</div>
+
+<!-- NOTIF -->
+<div id="notif" class="notif" style="display:none;"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let S = {
+  tasks: [], bugs: [], notes: [], serverGroups: [],
+  globalPlugins: [], testingItems: [], wikiPages: [],
+  theme: 'dark',
+};
+
+let activeNote = null;
+let activeWiki = null;
+let bugFilter = 'open';
+let archiveOpen = false;
+let pomodoroTimers = {}; // taskId -> { seconds, running, interval }
+let dragSrc = null;
+
+// ═══════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function now() { return new Date().toISOString(); }
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'2-digit' }) + ' ' +
+         d.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+}
+function fmtDateShort(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'2-digit' });
+}
+
+function save() {
+  try {
+    localStorage.setItem('ccn_v2', JSON.stringify(S));
+    updateAutoSaveStatus();
+  } catch(e) {}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem('ccn_v2');
+    if (raw) S = { ...S, ...JSON.parse(raw) };
+  } catch(e) {}
+}
+
+function updateAutoSaveStatus() {
+  const el = document.getElementById('autosave-status');
+  if (el) { el.textContent = 'Сохранено: ' + new Date().toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit', second:'2-digit' }); }
+}
+
+// ═══════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════
+function setTheme(t) {
+  S.theme = t;
+  document.body.className = t;
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('th-' + t)?.classList.add('active');
+  save();
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  document.getElementById('search-results').style.display = 'none';
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+function notify(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, 2200);
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════
+function openModal(type, id, parentId) {
+  const box = document.getElementById('modal-box');
+  box.innerHTML = buildModal(type, id, parentId);
+  box.className = 'modal' + (type.includes('Wiki') || type.includes('Note') || type.includes('Changelog') ? ' modal-lg' : '');
+  document.getElementById('modal-overlay').style.display = 'flex';
+  document.querySelector('#modal-overlay .modal-overlay').style.display = 'flex';
+  setTimeout(() => document.querySelector('#modal-box input, #modal-box textarea')?.focus(), 50);
+}
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+function row(label, html) { return `<div class="form-row"><label class="label">${label}</label>${html}</div>`; }
+function inp(id, placeholder, value='') { return `<input class="input" id="${id}" placeholder="${placeholder}" value="${esc(value)}"/>`; }
+function sel(id, opts, cur) {
+  return `<select class="input" id="${id}">${opts.map(([v,l]) => `<option value="${v}" ${cur===v?'selected':''}>${l}</option>`).join('')}</select>`;
+}
+function ta(id, placeholder, value='') { return `<textarea class="input" id="${id}" placeholder="${placeholder}">${esc(value)}</textarea>`; }
+function modalFooter(saveCall, label='Сохранить') {
+  return `<div class="flex gap-2" style="justify-content:flex-end;margin-top:16px;">
+    <button class="btn btn-ghost" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-primary" onclick="${saveCall}">${label}</button>
+  </div>`;
+}
+function modalHeader(title) {
+  return `<div class="modal-title">${title}<button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button></div>`;
+}
+
+function buildModal(type, id, parentId) {
+  // ── TASK ──
+  if (type === 'addTask' || type === 'editTask') {
+    const t = id ? S.tasks.find(x=>x.id===id) : null;
+    return modalHeader(t ? 'Редактировать задачу' : 'Новая задача') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Название *', inp('f-title','Название задачи', t?.title)) +
+      row('Описание', ta('f-desc','Описание...', t?.desc)) +
+      `<div class="form-grid" style="grid-template-columns:1fr 1fr;">` +
+      row('Приоритет', sel('f-priority',[['high','🔴 Высокий'],['medium','🟠 Средний'],['low','⚪ Низкий']], t?.priority||'medium')) +
+      row('Статус', sel('f-status',[['planned','В планах'],['progress','В процессе']], t?.status||'planned')) +
+      `</div>` +
+      row('Дедлайн', `<input class="input" id="f-deadline" type="date" value="${t?.deadline||''}">`) +
+      `</div>` +
+      modalFooter(`saveTask('${id||''}')`);
+  }
+
+  // ── BUG ──
+  if (type === 'addBug' || type === 'editBug') {
+    const b = id ? S.bugs.find(x=>x.id===id) : null;
+    return modalHeader(b ? 'Редактировать баг' : 'Новый баг') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Заголовок *', inp('f-title','Краткое описание бага', b?.title)) +
+      row('Описание / шаги', ta('f-desc','Шаги воспроизведения, поведение...', b?.desc)) +
+      `<div class="form-grid" style="grid-template-columns:1fr 1fr;">` +
+      row('Серьёзность', sel('f-severity',[['critical','🔴 Критический'],['medium','🟠 Средний'],['minor','⚪ Мелкий']], b?.severity||'medium')) +
+      row('Статус', sel('f-status',[['open','Открытый'],['progress','В работе'],['fixed','Исправлен']], b?.status||'open')) +
+      `</div>` +
+      row('Связан с плагином', inp('f-plugin','Название плагина (необяз.)', b?.plugin)) +
+      row('Воспроизводимость', sel('f-repro',[['always','Всегда'],['sometimes','Иногда'],['rare','Редко']], b?.repro||'always')) +
+      `</div>` +
+      modalFooter(`saveBug('${id||''}')`);
+  }
+
+  // ── NOTE ──
+  if (type === 'addNote') {
+    return modalHeader('Новая заметка') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Название *', inp('f-title','Название заметки')) +
+      `</div>` +
+      modalFooter("saveNote('')", 'Создать');
+  }
+
+  // ── SERVER GROUP ──
+  if (type === 'addServerGroup') {
+    return modalHeader('Новая группа серверов') +
+      `<div>` + row('Название *', inp('f-title','напр. Survival 1.21, Anarchy...')) + `</div>` +
+      modalFooter("saveServerGroup()");
+  }
+
+  // ── SERVER PLUGIN ──
+  if (type === 'addServerPlugin' || type === 'editServerPlugin') {
+    const grp = S.serverGroups.find(g=>g.id===parentId);
+    const p = id ? grp?.plugins.find(x=>x.id===id) : null;
+    return modalHeader((p?'Редактировать':'Новый') + ' плагин') +
+      `<div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--dim);margin-bottom:12px;">${esc(grp?.name)}</div>` +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Название *', inp('f-title','Название плагина', p?.title)) +
+      row('Описание', inp('f-desc','Краткое описание', p?.desc)) +
+      `<div class="form-grid" style="grid-template-columns:1fr 1fr;">` +
+      row('Версия', inp('f-ver','1.0.0', p?.ver)) +
+      row('Статус', sel('f-status',[['active','✅ Активен'],['testing','🔄 Тестируется'],['deprecated','⚠️ Устарел']], p?.status||'active')) +
+      `</div>` +
+      row('Зависимости', inp('f-deps','напр. WorldGuard, PAPI (через запятую)', p?.deps)) +
+      `</div>` +
+      modalFooter(`saveServerPlugin('${id||''}','${parentId}')`);
+  }
+
+  // ── GLOBAL PLUGIN ──
+  if (type === 'addGlobalPlugin' || type === 'editGlobalPlugin') {
+    const p = id ? S.globalPlugins.find(x=>x.id===id) : null;
+    return modalHeader((p?'Редактировать':'Новый глобальный') + ' плагин') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Название *', inp('f-title','Название плагина', p?.title)) +
+      row('Версия', inp('f-ver','1.0.0', p?.ver)) +
+      row('Зависимости', inp('f-deps','напр. WorldGuard, PAPI (через запятую)', p?.deps)) +
+      `</div>` +
+      modalFooter(`saveGlobalPlugin('${id||''}')`);
+  }
+
+  // ── PLUGIN TASK ──
+  if (type === 'addPluginTask') {
+    return modalHeader('Добавить задачу к плагину') +
+      `<div>` + row('Задача / фикс *', inp('f-title','Описание задачи или фикса')) + `</div>` +
+      modalFooter(`savePluginTask('${parentId}')`);
+  }
+
+  // ── CHANGELOG ──
+  if (type === 'addChangelog') {
+    return modalHeader('Запись в Changelog') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Версия *', inp('f-ver','напр. 1.2.0')) +
+      row('Изменения *', ta('f-desc','Что изменилось в этой версии...')) +
+      `</div>` +
+      modalFooter(`saveChangelog('${parentId}')`);
+  }
+
+  // ── TESTING ──
+  if (type === 'addTesting' || type === 'editTesting') {
+    const t = id ? S.testingItems.find(x=>x.id===id) : null;
+    return modalHeader(t ? 'Редактировать' : 'Добавить в тестируемое') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Плагин / фича *', inp('f-title','Что тестируется', t?.title)) +
+      row('Что сделано', ta('f-done','Что уже реализовано...', t?.done)) +
+      row('Что НЕ успел', ta('f-todo','Что осталось доделать...', t?.todo)) +
+      row('Заметки', ta('f-notes','Дополнительные заметки...', t?.notes)) +
+      `</div>` +
+      modalFooter(`saveTesting('${id||''}')`);
+  }
+
+  // ── WIKI ──
+  if (type === 'addWiki' || type === 'editWiki') {
+    const w = id ? S.wikiPages.find(x=>x.id===id) : null;
+    return modalHeader((w?'Редактировать':'Новая') + ' страница Wiki') +
+      `<div style="display:flex;flex-direction:column;gap:10px;">` +
+      row('Заголовок *', inp('f-title','Название страницы', w?.title)) +
+      row('Категория', inp('f-cat','напр. Механики, Конфиги, Правила', w?.cat)) +
+      row('Содержимое (Markdown)', `<textarea class="input" id="f-content" placeholder="# Заголовок&#10;## Раздел&#10;**жирный** _курсив_ \`код\`&#10;- список" style="min-height:200px;">${esc(w?.content)}</textarea>`) +
+      `</div>` +
+      modalFooter(`saveWiki('${id||''}')`);
+  }
+
+  // ── HISTORY ──
+  if (type === 'taskHistory') {
+    const t = S.tasks.find(x=>x.id===id);
+    const hist = (t?.history||[]).slice().reverse();
+    return modalHeader('История: ' + esc(t?.title)) +
+      (hist.length === 0 ? '<div class="empty">Истории нет</div>' :
+        hist.map(h => `<div class="history-item"><span style="color:var(--accent);">▸</span><span>${h.text}</span><span style="margin-left:auto;opacity:0.5;">${fmtDate(h.ts)}</span></div>`).join('')) +
+      `<div style="margin-top:12px;text-align:right;"><button class="btn btn-ghost" onclick="closeModal()">Закрыть</button></div>`;
+  }
+
+  return '';
+}
+
+// ═══════════════════════════════════════════════════════
+// TASKS
+// ═══════════════════════════════════════════════════════
+function addHistory(task, text) {
+  if (!task.history) task.history = [];
+  task.history.push({ text, ts: now() });
+}
+
+function saveTask(id) {
+  const title = v('f-title'); if (!title) { alert('Введите название'); return; }
+  const priority = v('f-priority'), status = v('f-status'), desc = v('f-desc');
+  const deadline = v('f-deadline');
+
+  if (id) {
+    const t = S.tasks.find(x=>x.id===id);
+    if (t) {
+      if (t.title !== title) addHistory(t, `Переименовано: "${t.title}" → "${title}"`);
+      if (t.status !== status) addHistory(t, `Статус: ${statusLabel(t.status)} → ${statusLabel(status)}`);
+      if (t.priority !== priority) addHistory(t, `Приоритет изменён на ${priority}`);
+      if (t.deadline !== deadline) addHistory(t, `Дедлайн: ${deadline || 'убран'}`);
+      Object.assign(t, { title, desc, priority, status, deadline });
+    }
+    notify('Задача обновлена');
+  } else {
+    const t = { id: uid(), title, desc, priority, status, deadline, history: [], pomodoro: 0, created: now() };
+    addHistory(t, 'Создана задача');
+    S.tasks.push(t);
+    notify('Задача создана');
+  }
+  save(); closeModal(); renderTasks();
+}
+
+function statusLabel(s) { return { planned:'В планах', progress:'В процессе', done:'Готово' }[s] || s; }
+
+function deleteTask(id) {
+  S.tasks = S.tasks.filter(t=>t.id!==id);
+  save(); notify('Задача удалена'); renderTasks(); renderDashboard();
+}
+
+function archiveTask(id) {
+  const t = S.tasks.find(x=>x.id===id);
+  if (t) { t.status = 'done'; t.archivedAt = now(); addHistory(t, 'Перемещено в архив'); }
+  save(); notify('Задача архивирована'); renderTasks();
+}
+
+function restoreTask(id) {
+  const t = S.tasks.find(x=>x.id===id);
+  if (t) { t.status = 'planned'; delete t.archivedAt; addHistory(t, 'Восстановлено из архива'); }
+  save(); notify('Задача восстановлена'); renderTasks();
+}
+
+function changeTaskStatus(id, status) {
+  const t = S.tasks.find(x=>x.id===id);
+  if (!t) return;
+  addHistory(t, `Статус: ${statusLabel(t.status)} → ${statusLabel(status)}`);
+  if (status === 'done') { t.status = 'done'; t.archivedAt = now(); }
+  else { t.status = status; delete t.archivedAt; }
+  save(); renderTasks();
+}
+
+// ── Pomodoro ──
+function startPomodoro(id) {
+  if (pomodoroTimers[id]?.running) return;
+  if (!pomodoroTimers[id]) pomodoroTimers[id] = { seconds: 0, running: false };
+  pomodoroTimers[id].running = true;
+  pomodoroTimers[id].interval = setInterval(() => {
+    pomodoroTimers[id].seconds++;
+    const el = document.getElementById('pomo-' + id);
+    if (el) el.textContent = fmtPomo(pomodoroTimers[id].seconds);
+  }, 1000);
+  const el = document.getElementById('pomo-' + id);
+  if (el) { el.parentElement.classList.add('running'); }
+}
+function stopPomodoro(id) {
+  if (!pomodoroTimers[id]) return;
+  clearInterval(pomodoroTimers[id].interval);
+  pomodoroTimers[id].running = false;
+  const t = S.tasks.find(x=>x.id===id);
+  if (t) { t.pomodoro = (t.pomodoro||0) + pomodoroTimers[id].seconds; save(); }
+  delete pomodoroTimers[id];
+  renderTasks();
+}
+function fmtPomo(s) { return Math.floor(s/3600).toString().padStart(2,'0') + ':' + Math.floor((s%3600)/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0'); }
+
+// ── Deadline helpers ──
+function deadlineClass(dl) {
+  if (!dl) return '';
+  const diff = new Date(dl) - new Date(); const day = 86400000;
+  if (diff < 0) return 'deadline-overdue';
+  if (diff < day * 2) return 'deadline-soon';
+  return 'deadline-ok';
+}
+function deadlineLabel(dl) {
+  if (!dl) return '';
+  const diff = new Date(dl) - new Date(); const day = 86400000;
+  if (diff < 0) return '⚠️ Просрочено ' + fmtDateShort(dl);
+  if (diff < day) return '🔥 Сегодня ' + fmtDateShort(dl);
+  if (diff < day*2) return '⏰ Завтра ' + fmtDateShort(dl);
+  return '📅 ' + fmtDateShort(dl);
+}
+
+// ── Drag & Drop ──
+function onDragStart(e, id) { dragSrc = id; e.dataTransfer.effectAllowed = 'move'; document.getElementById('tc-'+id)?.classList.add('dragging'); }
+function onDragEnd(id) { document.getElementById('tc-'+id)?.classList.remove('dragging'); }
+function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function onDrop(e, status) {
+  e.preventDefault();
+  if (!dragSrc) return;
+  const t = S.tasks.find(x=>x.id===dragSrc);
+  if (t && t.status !== status) {
+    addHistory(t, `Перетащено: ${statusLabel(t.status)} → ${statusLabel(status)}`);
+    if (status === 'done') { t.status = 'done'; t.archivedAt = now(); }
+    else { t.status = status; delete t.archivedAt; }
+    save();
+  }
+  dragSrc = null; renderTasks();
+}
+
+function toggleArchive() {
+  archiveOpen = !archiveOpen;
+  document.getElementById('tasks-archive').style.display = archiveOpen ? 'flex' : 'none';
+  document.getElementById('tasks-archive').style.flexDirection = 'column';
+  document.getElementById('tasks-archive').style.gap = '6px';
+  document.getElementById('archive-toggle-icon').textContent = archiveOpen ? '▼' : '▶';
+}
+
+function renderTasks() {
+  const active = S.tasks.filter(t => t.status !== 'done');
+  const archived = S.tasks.filter(t => t.status === 'done');
+  const cols = { planned: active.filter(t=>t.status==='planned'), progress: active.filter(t=>t.status==='progress') };
+
+  const colDef = [
+    { k:'planned', label:'В планах', color:'var(--dim)' },
+    { k:'progress', label:'В процессе', color:'var(--accent)' },
+  ];
+
+  const kanban = document.getElementById('kanban');
+  if (!kanban) return;
+
+  kanban.innerHTML = colDef.map(c => {
+    const tasks = cols[c.k] || [];
+    return `<div class="kanban-col" ondragover="onDragOver(event)" ondrop="onDrop(event,'${c.k}')">
+      <div class="kanban-col-header">
+        <span class="dot" style="background:${c.color};"></span>
+        ${c.label}
+        <span class="tag">${tasks.length}</span>
+      </div>
+      ${tasks.length === 0 ? `<div class="empty" style="padding:20px;">Пусто</div>` :
+        tasks.map(t => renderTaskCard(t)).join('')}
+    </div>`;
+  }).join('');
+
+  // Archive
+  document.getElementById('archive-count').textContent = archived.length;
+  const archEl = document.getElementById('tasks-archive');
+  if (archEl) {
+    archEl.innerHTML = archived.length === 0 ? `<div class="empty" style="padding:12px;">Нет выполненных задач</div>` :
+      archived.map(t => `
+        <div class="card" style="padding:10px 12px;display:flex;align-items:center;gap:10px;opacity:0.6;">
+          <span style="flex:1;font-size:13px;text-decoration:line-through;">${esc(t.title)}</span>
+          <span style="font-size:11px;color:var(--dim);">${fmtDateShort(t.archivedAt)}</span>
+          <button class="btn btn-ghost btn-xs" onclick="restoreTask('${t.id}')">↩ Восстановить</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteTask('${t.id}')">✕</button>
+        </div>`).join('');
+  }
+
+  // Full archive page
+  const archPage = document.getElementById('archive-list');
+  if (archPage) {
+    archPage.innerHTML = archived.length === 0 ? `<div class="empty">Архив пуст</div>` :
+      archived.map(t => `
+        <div class="card" style="padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:500;text-decoration:line-through;opacity:0.6;">${esc(t.title)}</div>
+            ${t.desc ? `<div style="font-size:12px;color:var(--dim);margin-top:4px;">${esc(t.desc)}</div>` : ''}
+            <div style="font-size:11px;color:var(--subtle);margin-top:6px;">Архивировано: ${fmtDate(t.archivedAt)}</div>
+          </div>
+          <button class="btn btn-ghost btn-xs" onclick="restoreTask('${t.id}')">↩</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteTask('${t.id}')">✕</button>
+        </div>`).join('');
+  }
+}
+
+function renderTaskCard(t) {
+  const pColor = t.priority==='high' ? 'var(--danger)' : t.priority==='medium' ? 'var(--warn)' : 'var(--subtle)';
+  const pomo = pomodoroTimers[t.id];
+  const totalSecs = (t.pomodoro||0) + (pomo?.seconds||0);
+  const dl = deadlineLabel(t.deadline);
+  const dlClass = deadlineClass(t.deadline);
+
+  return `<div class="task-card" id="tc-${t.id}" draggable="true"
+    ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd('${t.id}')">
+    <div style="display:flex;align-items:flex-start;gap:8px;">
+      <div class="priority-bar" style="background:${pColor};min-height:36px;"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:500;line-height:1.4;margin-bottom:4px;">${esc(t.title)}</div>
+        ${t.desc ? `<div style="font-size:12px;color:var(--dim);margin-bottom:6px;line-height:1.5;">${esc(t.desc)}</div>` : ''}
+        ${dl ? `<div style="font-size:11px;margin-bottom:6px;" class="${dlClass}">${dl}</div>` : ''}
+        <div style="display:flex;align-items:center;gap-4px;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+          <div class="pomodoro${pomo?.running?' running':''}" id="pomo-wrap-${t.id}">
+            ⏱ <span id="pomo-${t.id}">${fmtPomo(totalSecs)}</span>
+            ${!pomo?.running
+              ? `<button class="btn btn-ghost btn-xs" onclick="startPomodoro('${t.id}')">▶</button>`
+              : `<button class="btn btn-ghost btn-xs" onclick="stopPomodoro('${t.id}')">■</button>`}
+          </div>
+          <div class="flex gap-1">
+            <button class="btn btn-ghost btn-xs" onclick="openModal('taskHistory','${t.id}')" title="История">📜</button>
+            <button class="btn btn-ghost btn-xs" onclick="openModal('editTask','${t.id}')" title="Редактировать">✏️</button>
+            <button class="btn btn-ok btn-xs" onclick="archiveTask('${t.id}')" title="В архив">✓</button>
+            <button class="btn btn-danger btn-xs" onclick="deleteTask('${t.id}')" title="Удалить">✕</button>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <select style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--dim);font-size:11px;padding:2px 6px;cursor:pointer;font-family:'Onest',sans-serif;width:100%;" onchange="changeTaskStatus('${t.id}',this.value)">
+            <option value="${t.status}" selected>${statusLabel(t.status)}</option>
+            ${['planned','progress','done'].filter(s=>s!==t.status).map(s=>`<option value="${s}">${statusLabel(s)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function clearArchive() {
+  if (!confirm('Навсегда удалить все архивные задачи?')) return;
+  S.tasks = S.tasks.filter(t=>t.status!=='done');
+  save(); notify('Архив очищен'); renderTasks(); renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════════
+// BUGS
+// ═══════════════════════════════════════════════════════
+function saveBug(id) {
+  const title = v('f-title'); if (!title) { alert('Введите заголовок'); return; }
+  const data = { title, desc: v('f-desc'), severity: v('f-severity'), status: v('f-status'), plugin: v('f-plugin'), repro: v('f-repro') };
+  if (id) {
+    Object.assign(S.bugs.find(x=>x.id===id), data);
+    notify('Баг обновлён');
+  } else {
+    S.bugs.push({ id: uid(), ...data, created: now() });
+    notify('Баг добавлен');
+  }
+  save(); closeModal(); renderBugs();
+}
+function deleteBug(id) { S.bugs = S.bugs.filter(b=>b.id!==id); save(); notify('Баг удалён'); renderBugs(); }
+function filterBugs(f, el) {
+  bugFilter = f;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderBugs();
+}
+function renderBugs() {
+  const list = document.getElementById('bugs-list'); if (!list) return;
+  let bugs = bugFilter === 'all' ? S.bugs : S.bugs.filter(b=>b.status===bugFilter);
+  const sevColor = { critical:'var(--danger)', medium:'var(--warn)', minor:'var(--subtle)' };
+  const sevLabel = { critical:'Критический', medium:'Средний', minor:'Мелкий' };
+  const statusBadge = { open:`<span class="badge badge-deprecated">открытый</span>`, progress:`<span class="badge badge-testing">в работе</span>`, fixed:`<span class="badge badge-active">исправлен</span>` };
+  if (bugs.length === 0) { list.innerHTML = `<div class="empty">Нет багов в этой категории</div>`; return; }
+  list.innerHTML = bugs.map(b => `
+    <div class="card" style="padding:12px 14px;border-left:3px solid ${sevColor[b.severity]};">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span style="font-size:13px;font-weight:500;">${esc(b.title)}</span>
+            ${statusBadge[b.status]||''}
+            <span class="tag">${sevLabel[b.severity]}</span>
+            ${b.plugin ? `<span class="tag">🔌 ${esc(b.plugin)}</span>` : ''}
+            <span class="tag">Воспр.: ${b.repro==='always'?'Всегда':b.repro==='sometimes'?'Иногда':'Редко'}</span>
+          </div>
+          ${b.desc ? `<div style="font-size:12px;color:var(--dim);margin-top:4px;line-height:1.5;white-space:pre-wrap;">${esc(b.desc)}</div>` : ''}
+          <div style="font-size:10px;color:var(--subtle);margin-top:6px;font-family:'JetBrains Mono',monospace;">${fmtDate(b.created)}</div>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-ghost btn-xs" onclick="openModal('editBug','${b.id}')">✏️</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteBug('${b.id}')">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// NOTES
+// ═══════════════════════════════════════════════════════
+function saveNote(id) {
+  const title = v('f-title'); if (!title) { alert('Введите название'); return; }
+  if (id) {
+    const n = S.notes.find(x=>x.id===id);
+    if (n) n.title = title;
+  } else {
+    const n = { id: uid(), title, content: '', updated: now() };
+    S.notes.push(n);
+    activeNote = n.id;
+  }
+  save(); closeModal(); renderNotes();
+}
+
+function deleteNote(id) {
+  S.notes = S.notes.filter(n=>n.id!==id);
+  if (activeNote === id) activeNote = null;
+  save(); renderNotes();
+}
+
+function openNote(id) {
+  activeNote = id;
+  renderNotes();
+}
+
+function renderNotes() {
+  const list = document.getElementById('notes-list');
+  const area = document.getElementById('note-editor-area');
+  if (!list || !area) return;
+
+  list.innerHTML = S.notes.length === 0 ? `<div class="empty" style="padding:16px;">Нет заметок</div>` :
+    S.notes.map(n => `
+      <div class="wiki-item${activeNote===n.id?' ':''}${activeNote===n.id?'':''}${activeNote===n.id?'border-color:var(--accent)!important;':''}" 
+           style="${activeNote===n.id?'border-color:var(--accent);background:var(--accent-bg);':''}"
+           onclick="openNote('${n.id}')">
+        <span style="font-size:13px;font-weight:${activeNote===n.id?'600':'400'};">${esc(n.title)}</span>
+        <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();deleteNote('${n.id}')">✕</button>
+      </div>`).join('');
+
+  if (!activeNote || !S.notes.find(x=>x.id===activeNote)) {
+    area.innerHTML = `<div class="empty" style="padding:60px 20px;"><div style="font-size:32px;margin-bottom:10px;">📝</div>Выберите заметку или создайте новую</div>`;
+    return;
+  }
+
+  const note = S.notes.find(x=>x.id===activeNote);
+  area.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;height:calc(100vh - 180px);">
+      <div style="display:flex;flex-direction:column;">
+        <div style="font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">РЕДАКТОР (Markdown)</div>
+        <textarea class="input" style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;resize:none;line-height:1.7;"
+          oninput="updateNote('${note.id}',this.value)">${esc(note.content)}</textarea>
+      </div>
+      <div style="display:flex;flex-direction:column;overflow:hidden;">
+        <div style="font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">ПРЕДПРОСМОТР</div>
+        <div class="card md-preview" style="flex:1;padding:16px;overflow-y:auto;" id="note-preview">${renderMarkdown(note.content)}</div>
+      </div>
+    </div>`;
+}
+
+function updateNote(id, content) {
+  const n = S.notes.find(x=>x.id===id);
+  if (n) { n.content = content; n.updated = now(); save(); }
+  const prev = document.getElementById('note-preview');
+  if (prev) prev.innerHTML = renderMarkdown(content);
+}
+
+function renderMarkdown(md) {
+  if (!md) return '<span style="color:var(--subtle);">Начните вводить текст...</span>';
+  let html = esc(md)
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/_(.+?)_/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+    .replace(/^---$/gm, '<hr>')
+    .replace(/^\- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    .replace(/\n/g, '<br>');
+  // code blocks
+  html = html.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════
+// SERVER GROUPS
+// ═══════════════════════════════════════════════════════
+function saveServerGroup() {
+  const name = v('f-title'); if (!name) { alert('Введите название'); return; }
+  S.serverGroups.push({ id: uid(), name, plugins: [] });
+  save(); closeModal(); notify('Группа создана'); renderServers();
+}
+function deleteServerGroup(id) {
+  if (!confirm('Удалить группу и все её плагины?')) return;
+  S.serverGroups = S.serverGroups.filter(g=>g.id!==id);
+  save(); notify('Группа удалена'); renderServers();
+}
+function saveServerPlugin(id, groupId) {
+  const title = v('f-title'); if (!title) { alert('Введите название'); return; }
+  const grp = S.serverGroups.find(g=>g.id===groupId); if (!grp) return;
+  const data = { title, desc: v('f-desc'), ver: v('f-ver'), status: v('f-status'), deps: v('f-deps') };
+  if (id) { Object.assign(grp.plugins.find(x=>x.id===id), data); notify('Плагин обновлён'); }
+  else { grp.plugins.push({ id: uid(), ...data }); notify('Плагин добавлен'); }
+  save(); closeModal(); renderServers();
+}
+function deleteServerPlugin(pid, gid) {
+  const grp = S.serverGroups.find(g=>g.id===gid);
+  if (grp) grp.plugins = grp.plugins.filter(p=>p.id!==pid);
+  save(); notify('Плагин удалён'); renderServers();
+}
+
+function renderServers() {
+  const el = document.getElementById('server-groups-list'); if (!el) return;
+  const statusBadge = { active:'<span class="badge badge-active">активен</span>', testing:'<span class="badge badge-testing">тестируется</span>', deprecated:'<span class="badge badge-deprecated">устарел</span>' };
+  if (S.serverGroups.length === 0) { el.innerHTML = `<div class="empty">Нет групп серверов</div>`; return; }
+  el.innerHTML = S.serverGroups.map(grp => `
+    <div class="card">
+      <div class="card-header">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-server">SERVER</span>
+          <span style="font-weight:600;font-size:14px;">${esc(grp.name)}</span>
+          <span class="tag">${grp.plugins.length} плагинов</span>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('addServerPlugin',null,'${grp.id}')">+ Плагин</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteServerGroup('${grp.id}')">✕</button>
+        </div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+        ${grp.plugins.length === 0 ? `<div style="font-size:12px;color:var(--subtle);">Плагинов нет</div>` :
+          grp.plugins.map(p => `
+            <div class="card" style="padding:10px 12px;">
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <div style="flex:1;">
+                  <div class="flex items-center gap-2 fw" style="margin-bottom:4px;">
+                    <span style="font-size:13px;font-weight:500;">${esc(p.title)}</span>
+                    ${p.ver ? `<span class="tag">v${esc(p.ver)}</span>` : ''}
+                    ${statusBadge[p.status]||''}
+                  </div>
+                  ${p.desc ? `<div style="font-size:12px;color:var(--dim);margin-bottom:4px;">${esc(p.desc)}</div>` : ''}
+                  ${p.deps ? `<div style="display:flex;gap:4px;flex-wrap:wrap;">${p.deps.split(',').map(d=>`<span class="dep-tag">${esc(d.trim())}</span>`).join('')}</div>` : ''}
+                </div>
+                <div class="flex gap-1">
+                  <button class="btn btn-ghost btn-xs" onclick="openModal('editServerPlugin','${p.id}','${grp.id}')">✏️</button>
+                  <button class="btn btn-danger btn-xs" onclick="deleteServerPlugin('${p.id}','${grp.id}')">✕</button>
+                </div>
+              </div>
+            </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// GLOBAL PLUGINS
+// ═══════════════════════════════════════════════════════
+function saveGlobalPlugin(id) {
+  const title = v('f-title'); if (!title) { alert('Введите название'); return; }
+  const data = { title, ver: v('f-ver'), deps: v('f-deps') };
+  if (id) { Object.assign(S.globalPlugins.find(x=>x.id===id), data); notify('Плагин обновлён'); }
+  else { S.globalPlugins.push({ id: uid(), ...data, tasks: [], changelog: [] }); notify('Плагин создан'); }
+  save(); closeModal(); renderGlobalPlugins();
+}
+function deleteGlobalPlugin(id) {
+  if (!confirm('Удалить плагин и все его данные?')) return;
+  S.globalPlugins = S.globalPlugins.filter(p=>p.id!==id);
+  save(); notify('Плагин удалён'); renderGlobalPlugins();
+}
+function savePluginTask(pid) {
+  const title = v('f-title'); if (!title) { alert('Введите текст'); return; }
+  const p = S.globalPlugins.find(x=>x.id===pid);
+  if (p) { p.tasks.push({ id: uid(), title, done: false }); save(); closeModal(); notify('Задача добавлена'); renderGlobalPlugins(); }
+}
+function togglePluginTask(pid, tid) {
+  const p = S.globalPlugins.find(x=>x.id===pid); if (!p) return;
+  const t = p.tasks.find(x=>x.id===tid); if (!t) return;
+  t.done = !t.done;
+  p.tasks.sort((a,b) => a.done===b.done?0:a.done?1:-1);
+  save(); renderGlobalPlugins();
+}
+function deletePluginTask(pid, tid) {
+  const p = S.globalPlugins.find(x=>x.id===pid);
+  if (p) { p.tasks = p.tasks.filter(t=>t.id!==tid); save(); renderGlobalPlugins(); }
+}
+function saveChangelog(pid) {
+  const ver = v('f-ver'), desc = v('f-desc');
+  if (!ver || !desc) { alert('Заполните версию и описание'); return; }
+  const p = S.globalPlugins.find(x=>x.id===pid);
+  if (p) {
+    if (!p.changelog) p.changelog = [];
+    p.changelog.unshift({ id: uid(), ver, desc, date: now() });
+    save(); closeModal(); notify('Запись добавлена'); renderGlobalPlugins();
+  }
+}
+
+function renderGlobalPlugins() {
+  const el = document.getElementById('global-plugins-list'); if (!el) return;
+  if (S.globalPlugins.length === 0) { el.innerHTML = `<div class="empty">Нет глобальных плагинов</div>`; return; }
+  el.innerHTML = S.globalPlugins.map(p => {
+    const pending = p.tasks.filter(t=>!t.done);
+    const done = p.tasks.filter(t=>t.done);
+    const total = p.tasks.length;
+    const pct = total ? Math.round(done.length/total*100) : 0;
+
+    const taskList = (tasks) => tasks.map(t => `
+      <div class="check-item">
+        <div class="checkbox${t.done?' checked':''}" onclick="togglePluginTask('${p.id}','${t.id}')">
+          ${t.done ? `<svg width="9" height="9" fill="none" stroke="var(--ok)" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
+        </div>
+        <span style="font-size:13px;flex:1;${t.done?'text-decoration:line-through;opacity:0.4;':''}">${esc(t.title)}</span>
+        <button class="btn btn-ghost btn-xs" onclick="deletePluginTask('${p.id}','${t.id}')" style="opacity:0.3;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0.3'">✕</button>
+      </div>`).join('');
+
+    const changelog = (p.changelog||[]).slice(0,3);
+
+    return `<div class="card">
+      <div class="card-header">
+        <div class="flex items-center gap-2 fw">
+          <span class="badge badge-plugin">PLUGIN</span>
+          <span style="font-weight:600;font-size:14px;">${esc(p.title)}</span>
+          ${p.ver ? `<span class="tag">v${esc(p.ver)}</span>` : ''}
+          ${p.deps ? p.deps.split(',').map(d=>`<span class="dep-tag">${esc(d.trim())}</span>`).join('') : ''}
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('addPluginTask',null,'${p.id}')">+ Задача</button>
+          <button class="btn btn-ghost btn-sm" onclick="openModal('addChangelog',null,'${p.id}')">+ Changelog</button>
+          <button class="btn btn-ghost btn-xs" onclick="openModal('editGlobalPlugin','${p.id}')">✏️</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteGlobalPlugin('${p.id}')">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">
+              Задачи — ${pending.length} в работе · ${done.length} выполнено
+            </div>
+            ${total > 0 ? `<div class="prog-bar" style="margin-bottom:8px;"><div class="prog-fill" style="width:${pct}%"></div></div>` : ''}
+            ${total === 0 ? `<div style="font-size:12px;color:var(--subtle);">Задач нет</div>` : ''}
+            ${pending.length > 0 ? taskList(pending) : ''}
+            ${done.length > 0 ? `<div style="font-size:10px;color:var(--subtle);font-family:'JetBrains Mono',monospace;margin:8px 0 4px;text-transform:uppercase;">Выполнено</div>${taskList(done)}` : ''}
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Changelog</div>
+            ${changelog.length === 0 ? `<div style="font-size:12px;color:var(--subtle);">Нет записей</div>` :
+              changelog.map(c => `
+                <div class="changelog-entry">
+                  <div class="flex items-center gap-2" style="margin-bottom:3px;">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--accent);">v${esc(c.ver)}</span>
+                    <span style="font-size:10px;color:var(--subtle);">${fmtDateShort(c.date)}</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--dim);white-space:pre-wrap;">${esc(c.desc)}</div>
+                </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// TESTING
+// ═══════════════════════════════════════════════════════
+function saveTesting(id) {
+  const title = v('f-title'); if (!title) { alert('Введите название'); return; }
+  const data = { title, done: v('f-done'), todo: v('f-todo'), notes: v('f-notes'), updated: now() };
+  if (id) { Object.assign(S.testingItems.find(x=>x.id===id), data); notify('Обновлено'); }
+  else { S.testingItems.push({ id: uid(), ...data, created: now() }); notify('Добавлено'); }
+  save(); closeModal(); renderTesting();
+}
+function deleteTesting(id) { S.testingItems = S.testingItems.filter(t=>t.id!==id); save(); notify('Удалено'); renderTesting(); }
+
+function renderTesting() {
+  const el = document.getElementById('testing-list'); if (!el) return;
+  if (S.testingItems.length === 0) { el.innerHTML = `<div class="empty"><div style="font-size:32px;margin-bottom:10px;">🔄</div>Нет элементов в тестировании</div>`; return; }
+  el.innerHTML = S.testingItems.map(t => `
+    <div class="card">
+      <div class="card-header">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-testing">TESTING</span>
+          <span style="font-weight:600;font-size:14px;">${esc(t.title)}</span>
+          <span style="font-size:10px;color:var(--subtle);font-family:'JetBrains Mono',monospace;">upd: ${fmtDateShort(t.updated)}</span>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('editTesting','${t.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTesting('${t.id}')">✕</button>
+        </div>
+      </div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div style="font-size:11px;color:var(--ok);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:6px;">✓ Что сделано</div>
+          ${t.done ? `<div style="font-size:13px;line-height:1.6;white-space:pre-wrap;">${esc(t.done)}</div>` : `<div style="font-size:12px;color:var(--subtle);">Не заполнено</div>`}
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--danger);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:6px;">✗ Что не успел</div>
+          ${t.todo ? `<div style="font-size:13px;line-height:1.6;white-space:pre-wrap;">${esc(t.todo)}</div>` : `<div style="font-size:12px;color:var(--subtle);">Не заполнено</div>`}
+        </div>
+        ${t.notes ? `<div style="grid-column:1/-1;"><div style="font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px;">Заметки</div><div style="font-size:12px;color:var(--dim);line-height:1.6;white-space:pre-wrap;">${esc(t.notes)}</div></div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// WIKI
+// ═══════════════════════════════════════════════════════
+function saveWiki(id) {
+  const title = v('f-title'); if (!title) { alert('Введите заголовок'); return; }
+  const data = { title, cat: v('f-cat'), content: document.getElementById('f-content')?.value||'' };
+  if (id) { Object.assign(S.wikiPages.find(x=>x.id===id), data); notify('Страница обновлена'); }
+  else { S.wikiPages.push({ id: uid(), ...data, created: now() }); notify('Страница создана'); activeWiki = S.wikiPages[S.wikiPages.length-1].id; }
+  save(); closeModal(); renderWiki();
+}
+function deleteWiki(id) {
+  S.wikiPages = S.wikiPages.filter(p=>p.id!==id);
+  if (activeWiki === id) activeWiki = null;
+  save(); renderWiki();
+}
+function openWiki(id) { activeWiki = id; renderWiki(); }
+
+function renderWiki() {
+  const list = document.getElementById('wiki-list');
+  const viewer = document.getElementById('wiki-viewer');
+  if (!list || !viewer) return;
+
+  const cats = [...new Set(S.wikiPages.map(p=>p.cat||'Общее'))];
+  list.innerHTML = S.wikiPages.length === 0 ? `<div class="empty" style="padding:16px;">Нет страниц</div>` :
+    cats.map(cat => {
+      const pages = S.wikiPages.filter(p=>(p.cat||'Общее')===cat);
+      return `<div style="margin-bottom:8px;">
+        <div style="font-size:10px;color:var(--subtle);font-family:'JetBrains Mono',monospace;text-transform:uppercase;padding:4px 8px;">${esc(cat)}</div>
+        ${pages.map(p => `
+          <div class="wiki-item" style="${activeWiki===p.id?'border-color:var(--accent);background:var(--accent-bg);':''}" onclick="openWiki('${p.id}')">
+            <span style="font-size:13px;">${esc(p.title)}</span>
+            <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();deleteWiki('${p.id}')">✕</button>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+
+  if (!activeWiki || !S.wikiPages.find(x=>x.id===activeWiki)) {
+    viewer.innerHTML = `<div class="empty" style="padding:60px;"><div style="font-size:32px;margin-bottom:10px;">📖</div>Выберите страницу</div>`;
+    return;
+  }
+
+  const page = S.wikiPages.find(x=>x.id===activeWiki);
+  viewer.innerHTML = `
+    <div class="card" style="padding:20px;min-height:300px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:18px;font-weight:700;">${esc(page.title)}</div>
+          ${page.cat ? `<div style="font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px;">${esc(page.cat)}</div>` : ''}
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('editWiki','${page.id}')">✏️ Редактировать</button>
+      </div>
+      <div class="md-preview">${renderMarkdown(page.content)}</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════
+function renderDashboard() {
+  const el = document.getElementById('stats-grid'); if (!el) return;
+  const activeTasks = S.tasks.filter(t=>t.status!=='done').length;
+  const doneTasks = S.tasks.filter(t=>t.status==='done').length;
+  const activePlugins = [...S.globalPlugins, ...S.serverGroups.flatMap(g=>g.plugins)].filter(p=>p.status!=='deprecated').length;
+  const openBugs = S.bugs.filter(b=>b.status!=='fixed').length;
+
+  el.innerHTML = [
+    { num: activeTasks, label: 'Активных задач', color: 'var(--accent)' },
+    { num: doneTasks, label: 'Выполнено задач', color: 'var(--ok)' },
+    { num: activePlugins, label: 'Активных плагинов', color: 'var(--warn)' },
+    { num: openBugs, label: 'Открытых багов', color: 'var(--danger)' },
+  ].map(s => `
+    <div class="stat-card">
+      <div class="stat-num" style="color:${s.color};">${s.num}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>`).join('');
+
+  const prio = document.getElementById('dash-priority');
+  if (prio) {
+    const high = S.tasks.filter(t=>t.priority==='high'&&t.status!=='done').length;
+    const med = S.tasks.filter(t=>t.priority==='medium'&&t.status!=='done').length;
+    const low = S.tasks.filter(t=>t.priority==='low'&&t.status!=='done').length;
+    const total = high+med+low||1;
+    prio.innerHTML = [
+      { label:'Высокий', count:high, color:'var(--danger)' },
+      { label:'Средний', count:med, color:'var(--warn)' },
+      { label:'Низкий', count:low, color:'var(--subtle)' },
+    ].map(r => `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="font-size:12px;color:var(--dim);width:70px;">${r.label}</span>
+        <div class="prog-bar" style="flex:1;"><div class="prog-fill" style="width:${Math.round(r.count/total*100)}%;background:${r.color};"></div></div>
+        <span style="font-size:12px;font-family:'JetBrains Mono',monospace;color:${r.color};width:20px;text-align:right;">${r.count}</span>
+      </div>`).join('') + (high+med+low===0?`<div style="font-size:12px;color:var(--subtle);">Нет активных задач</div>`:'');
+  }
+
+  const recent = document.getElementById('dash-recent');
+  if (recent) {
+    const events = [];
+    S.tasks.forEach(t => (t.history||[]).slice(-1).forEach(h => events.push({ text: `[Задача] ${h.text}`, ts: h.ts })));
+    S.bugs.forEach(b => events.push({ text: `[Баг] ${b.title}`, ts: b.created }));
+    events.sort((a,b) => new Date(b.ts)-new Date(a.ts));
+    const top = events.slice(0,6);
+    recent.innerHTML = top.length === 0 ? `<div style="font-size:12px;color:var(--subtle);">Нет событий</div>` :
+      top.map(e => `
+        <div class="history-item">
+          <span style="color:var(--accent);">▸</span>
+          <span style="flex:1;font-size:12px;">${esc(e.text)}</span>
+          <span style="opacity:0.5;">${fmtDateShort(e.ts)}</span>
+        </div>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════════════
+function doSearch(q) {
+  if (!q || q.length < 2) { clearSearch(); return; }
+  const lo = q.toLowerCase();
+  const results = [];
+
+  S.tasks.forEach(t => { if ((t.title+t.desc).toLowerCase().includes(lo)) results.push({ type:'Задача', title:t.title, sub:t.desc, icon:'📋' }); });
+  S.bugs.forEach(b => { if ((b.title+b.desc).toLowerCase().includes(lo)) results.push({ type:'Баг', title:b.title, sub:b.desc, icon:'🐛' }); });
+  S.notes.forEach(n => { if ((n.title+n.content).toLowerCase().includes(lo)) results.push({ type:'Заметка', title:n.title, sub:'', icon:'📝' }); });
+  S.globalPlugins.forEach(p => { if (p.title.toLowerCase().includes(lo)) results.push({ type:'Глоб. плагин', title:p.title, sub:`v${p.ver||'?'}`, icon:'📦' }); });
+  S.serverGroups.forEach(g => {
+    if (g.name.toLowerCase().includes(lo)) results.push({ type:'Группа серверов', title:g.name, sub:'', icon:'🎛️' });
+    g.plugins.forEach(p => { if (p.title.toLowerCase().includes(lo)) results.push({ type:'Серверный плагин', title:p.title, sub:g.name, icon:'🔌' }); });
+  });
+  S.wikiPages.forEach(w => { if ((w.title+w.content).toLowerCase().includes(lo)) results.push({ type:'Wiki', title:w.title, sub:w.cat, icon:'📖' }); });
+
+  const out = document.getElementById('search-output');
+  out.innerHTML = results.length === 0 ? `<div class="empty">Ничего не найдено по запросу "${esc(q)}"</div>` :
+    results.map(r => `
+      <div class="card" style="padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:18px;">${r.icon}</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;">${esc(r.title)}</div>
+          ${r.sub ? `<div style="font-size:12px;color:var(--dim);">${esc(r.sub)}</div>` : ''}
+        </div>
+        <span class="tag">${r.type}</span>
+      </div>`).join('');
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('search-results').style.display = 'block';
+}
+
+function clearSearch() {
+  document.getElementById('global-search').value = '';
+  document.getElementById('search-results').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-dashboard').classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════
+function exportData() {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'corecraft-nexus-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); notify('Данные экспортированы');
+}
+function importData(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      S = { ...S, ...data };
+      save(); renderAll(); notify('Данные импортированы');
+    } catch { alert('Ошибка чтения файла'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════════════
+function renderAll() {
+  renderDashboard();
+  renderTasks();
+  renderBugs();
+  renderNotes();
+  renderServers();
+  renderGlobalPlugins();
+  renderTesting();
+  renderWiki();
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+load();
+setTheme(S.theme || 'dark');
+renderAll();
+
+// Autosave every 30 seconds
+setInterval(() => { save(); }, 30000);
+
+console.log('CoreCraft Nexus v2.0 initialized | Dev: astridhanson | TG: @ahilesgroup');
+</script>
+</body>
+</html>
