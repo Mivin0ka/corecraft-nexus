@@ -242,7 +242,7 @@ export function Sidebar({ currentPage, setCurrentPage, theme, setTheme, state, s
       </div>
 
       {/* Search */}
-      <div className="relative p-4">
+      <div className="relative z-50 p-4">
         <div className="relative">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -266,7 +266,7 @@ export function Sidebar({ currentPage, setCurrentPage, theme, setTheme, state, s
 
         {/* Search Results Dropdown */}
         {isSearchFocused && searchResults.length > 0 && (
-          <div className="glass absolute left-4 right-4 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-xl p-2 animate-slide-up">
+          <div className="glass absolute left-4 right-4 top-[calc(100%-8px)] z-[100] mt-2 max-h-80 overflow-y-auto rounded-xl border border-border/50 bg-background/95 p-2 shadow-xl animate-slide-up">
             {searchResults.map((result) => (
               <button
                 key={`${result.type}-${result.id}`}
@@ -284,7 +284,7 @@ export function Sidebar({ currentPage, setCurrentPage, theme, setTheme, state, s
         )}
 
         {isSearchFocused && search && searchResults.length === 0 && (
-          <div className="glass absolute left-4 right-4 top-full z-50 mt-2 rounded-xl p-4 text-center text-sm text-muted-foreground animate-slide-up">
+          <div className="glass absolute left-4 right-4 top-[calc(100%-8px)] z-[100] mt-2 rounded-xl border border-border/50 bg-background/95 p-4 text-center text-sm text-muted-foreground shadow-xl animate-slide-up">
             Ничего не найдено
           </div>
         )}
